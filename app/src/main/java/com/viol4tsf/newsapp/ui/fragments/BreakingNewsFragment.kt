@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.viol4tsf.newsapp.R
 import com.viol4tsf.newsapp.adapters.NewsAdapter
@@ -30,6 +31,13 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
         viewModel = (activity as MainActivity).viewModel
         setupRecyclerView()
+
+        newsAdapter.setOnItemClickListener { article ->
+            val bundle = Bundle().apply {
+                putSerializable("article", article)
+            }
+            findNavController().navigate(R.id.action_breakingNewsFragment_to_articleFragment, bundle)
+        }
 
         viewModel.breakingNews.observe(viewLifecycleOwner, Observer { response ->
             when(response) {
@@ -63,18 +71,18 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
     private fun setupRecyclerView(){
         newsAdapter = NewsAdapter()
-        breakingNewsRecyclerView.apply {
+        binding.breakingNewsRecyclerView.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
         }
     }
 
     private fun hideProgressBar(){
-        paginationProgressBar.visibility = View.INVISIBLE
+        binding.paginationProgressBar.visibility = View.INVISIBLE
     }
 
     private fun showProgressBar(){
-        paginationProgressBar.visibility = View.VISIBLE
+        binding.paginationProgressBar.visibility = View.VISIBLE
     }
 
     override fun onDestroy() {
